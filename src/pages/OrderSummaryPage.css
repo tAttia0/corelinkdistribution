@@ -1,0 +1,23 @@
+/* src/pages/OrderSummaryPage.css */
+
+/* Hide the mobile list by default on larger screens */
+.mobile-list {
+    display: none;
+}
+
+/* Show the desktop table by default on larger screens */
+.desktop-table {
+    display: block;
+}
+
+/* Media query for Mobile (screens up to Antd's 'sm' breakpoint, typically 576px) */
+@media (max-width: 575.98px) {
+    /* On mobile, hide the standard table */
+    .desktop-table {
+        display: none !important;
+    }
+    /* On mobile, show the mobile list */
+    .mobile-list {
+        display: block !important;
+    }
+}
