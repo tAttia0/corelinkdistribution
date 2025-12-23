@@ -1,20 +1,12 @@
 // src/types/order.ts
 
-// ⚠️ DELETED: We no longer use this complex structure, we use string[]
-// export interface ProductImage {
-//  id: number;
-//  url: string; // Placeholder, will be Firebase storage URL
-// }
-
 export interface Product {
   id: string;
   title: string;
-  title_ar: string; // Arabic product title (from our latest discussion)
-  // ⚠️ DELETED: We removed these from the Firestore structure to simplify
-  // description: string;
-  // description_ar: string; 
+  title_ar: string; 
+  companyName:string;
   price: number;
-  images: string[]; // 💡 FIX 1: Simplified to use an array of strings (URLs)
+  images: string[]; 
 }
 
 export interface SelectedProduct extends Product {

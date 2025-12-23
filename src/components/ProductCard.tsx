@@ -1,7 +1,7 @@
 // src/components/ProductCard.tsx (MODIFIED: Quantity Input size and limit)
 
 import React, { useState, useCallback } from 'react';
-import { Card, Button, Typography, Row, Col, InputNumber, Checkbox, Modal, Image } from 'antd';
+import { Card, Button, Typography, Row, Col, InputNumber, Checkbox, Modal, Image, Badge } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { Product } from '../types/order';
 
@@ -55,6 +55,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
 
   return (
     <>
+    <Badge.Ribbon text={product.companyName} style={{marginTop: '-15px'}}>
+
       <Card
         hoverable
         style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}
@@ -85,7 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
           <img
             alt={product.title}
             src={currentImageUrl}
-            style={{ height: '100%', width: '100%', objectFit: 'cover' }}
+            style={{ height: '100%', width: '100%', objectFit: 'contain' }}
           />
           {totalImages > 1 && (
             <>
@@ -131,6 +133,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
           </Col>
         </Row>
       </Card>
+    </Badge.Ribbon>
 
       {/* Image Zoom Modal (Remains the same) */}
       <Modal
@@ -138,7 +141,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}
-        width={800}
+        width={400}
         centered
       >
         <Image 

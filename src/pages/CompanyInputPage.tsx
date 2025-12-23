@@ -1,20 +1,20 @@
 // src/pages/CompanyInputPage.tsx (MODIFIED LAYOUT AND INTEGRATED FIREBASE)
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Input, Button, Form, Card, Typography, message, Row, Col, Spin } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Form, Input, message, Row, Spin, Typography } from 'antd';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../App';
 import { useOrder } from '../context/OrderContext';
 import { getAccessCode } from '../firebase/api'; // 💡 Import the Firebase API function
 
 const { Title, Text } = Typography;
 
-const CompanyInputPage: React.FC = () => {
+const CompanyInputPage = () => {
   const navigate = useNavigate();
   const { companyName, setCompanyName } = useOrder();
   const [form] = Form.useForm();
-  
+
   // --- Firebase Integration States ---
   const [validAccessCode, setValidAccessCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // Initial loading state for fetching code
@@ -24,7 +24,7 @@ const CompanyInputPage: React.FC = () => {
   useEffect(() => {
     const fetchCode = async () => {
       try {
-        const code = await getAccessCode(); 
+        const code = await getAccessCode();
         setValidAccessCode(code);
 
         if (!code) {
@@ -38,7 +38,7 @@ const CompanyInputPage: React.FC = () => {
     };
     fetchCode();
   }, []);
-  
+
   // --- Form Submission Handler (Integrated Firebase Check) ---
   const onFinish = (values: { companyName: string, accessCode: string }) => {
     setSubmitting(true);
@@ -72,12 +72,12 @@ const CompanyInputPage: React.FC = () => {
 
   // If code failed to load entirely
   if (!validAccessCode) {
-      return (
-          <div style={{ textAlign: 'center', marginTop: '100px' }}>
-              <Title level={3} type="danger">Configuration Error</Title>
-              <Text>The application could not load the required access code from the database.</Text>
-          </div>
-      );
+    return (
+      <div style={{ textAlign: 'center', marginTop: '100px' }}>
+        <Title level={3} type="danger">Configuration Error</Title>
+        <Text>The application could not load the required access code from the database.</Text>
+      </div>
+    );
   }
 
   // --- Main Render ---
@@ -85,10 +85,10 @@ const CompanyInputPage: React.FC = () => {
     // Use Row and Col to center the card vertically and horizontally
     <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
       <Col xs={24} sm={20} md={12} lg={8} xl={6}>
-        <Card 
-          style={{ 
-            width: '100%', 
-            backgroundColor: CARD_BACKGROUND_COLOR, 
+        <Card
+          style={{
+            width: '100%',
+            backgroundColor: CARD_BACKGROUND_COLOR,
             borderRadius: 10,
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
           }}
@@ -97,7 +97,7 @@ const CompanyInputPage: React.FC = () => {
           <Title level={3} style={{ color: CARD_FOREGROUND_COLOR, marginBottom: 30 }}>
             Start Your Order
           </Title>
-          
+
           <Form
             form={form}
             name="company_input"
@@ -111,10 +111,10 @@ const CompanyInputPage: React.FC = () => {
               name="companyName"
               rules={[{ required: true, message: 'Please enter the company name!' }]}
             >
-              <Input 
-                prefix={<UserOutlined style={{ color: PRIMARY_COLOR }} />} 
-                placeholder="Enter Company Name" 
-                size="large" 
+              <Input
+                prefix={<UserOutlined style={{ color: PRIMARY_COLOR }} />}
+                placeholder="Enter Company Name"
+                size="large"
               />
             </Form.Item>
 
@@ -124,10 +124,10 @@ const CompanyInputPage: React.FC = () => {
               name="accessCode"
               rules={[{ required: true, message: 'Please enter the access code!' }]}
             >
-              <Input.Password 
+              <Input.Password
                 prefix={<LockOutlined style={{ color: PRIMARY_COLOR }} />}
-                placeholder="Access Code" 
-                size="large" 
+                placeholder="Access Code"
+                size="large"
               />
             </Form.Item>
 

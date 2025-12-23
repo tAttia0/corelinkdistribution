@@ -1,29 +1,29 @@
 // src/pages/ProductSelectionPage.tsx
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowRightOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { Alert, Button, Col, Empty, message, Row, Spin, Typography } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography, Button, Row, Col, Empty, message, Spin } from 'antd';
-import { ShoppingCartOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import type { Product } from '../types/order';
-import { useOrder } from '../context/OrderContext';
 import { ROUTES } from '../App';
 import ProductCard from '../components/ProductCard';
-import { fetchProducts } from '../firebase/api'; 
+import { useOrder } from '../context/OrderContext';
+import { fetchProducts } from '../firebase/api';
+import type { Product } from '../types/order';
 
 const { Title, Text } = Typography;
 
-const ProductSelectionPage: React.FC = () => {
+const ProductSelectionPage = () => {
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const navigate = useNavigate();
   // We use addProduct which handles both adding and updating quantity
-  const { companyName, selectedProducts, addProduct } = useOrder(); 
+  const { companyName, selectedProducts, addProduct } = useOrder();
 
   // Function to get the current quantity of a product for the ProductCard
   const getProductQuantity = (productId: string) => {
-      const selected = selectedProducts.find(p => p.id === productId);
-      return selected ? selected.quantity : 0;
+    const selected = selectedProducts.find(p => p.id === productId);
+    return selected ? selected.quantity : 0;
   };
 
   // --- Data Fetching Effect (Existing Logic) ---
@@ -46,7 +46,7 @@ const ProductSelectionPage: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     loadProducts();
   }, [companyName, navigate]);
 
@@ -58,9 +58,9 @@ const ProductSelectionPage: React.FC = () => {
 
     // Optional: provide dynamic feedback
     if (quantity === 0) {
-        message.info(`Removed ${product.title} from cart.`);
+      message.info(`Removed ${product.title} from cart.`);
     } else if (getProductQuantity(product.id) === 0) {
-        message.success(`Added ${product.title} (x${quantity}) to cart.`);
+      message.success(`Added ${product.title} (x${quantity}) to cart.`);
     }
   }, [addProduct]);
 
@@ -91,13 +91,12 @@ const ProductSelectionPage: React.FC = () => {
       <Title level={2} style={{ marginBottom: 8 }}>
         Step 2: Product Selection
       </Title>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 24 }}>
-        Placing order for: <Text strong>{companyName}</Text>
-      </Text>
+      <Alert title={"Placing order for: " + companyName} style={{ display: 'block', marginBottom: 24 }} type="info" />
+
 
       {/* Product List */}
       {availableProducts.length === 0 ? (
-        <Empty 
+        <Empty
           description="No products available at this time."
           style={{ marginTop: 50 }}
         />
@@ -117,14 +116,14 @@ const ProductSelectionPage: React.FC = () => {
       )}
 
       {/* Fixed Footer Bar */}
-      <div 
+      <div
         style={{
           position: 'fixed',
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: '#f0f2f5', 
-          borderTop: '1px solid #e8e8e8', 
+          backgroundColor: '#f0f2f5',
+          borderTop: '1px solid #e8e8e8',
           padding: '12px 20px',
           zIndex: 10,
         }}
@@ -147,7 +146,7 @@ const ProductSelectionPage: React.FC = () => {
           </Col>
         </Row>
       </div>
-      
+
       {/* Spacer to account for fixed footer */}
       <div style={{ height: '70px' }}></div>
     </div>

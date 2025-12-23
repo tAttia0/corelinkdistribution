@@ -1,16 +1,16 @@
 // src/pages/OrderSummaryPage.tsx (COMPLETE CODE)
 
-import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Typography, Button, Row, Col, List, Card, message, Divider, Modal } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, List, message, Modal, Row, Typography } from 'antd';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../App';
 import { useOrder } from '../context/OrderContext';
 import { saveOrder, type OrderPayload } from '../firebase/api'; // 💡 IMPORT API AND PAYLOAD TYPE
-import { ROUTES } from '../App';
 
 const { Title, Text } = Typography;
 
-const OrderSummaryPage: React.FC = () => {
+const OrderSummaryPage = () => {
   const navigate = useNavigate();
   const { companyName, selectedProducts, updateProductQuantity, clearOrder } = useOrder();
 
@@ -18,7 +18,7 @@ const OrderSummaryPage: React.FC = () => {
   if (!companyName || selectedProducts.length === 0) {
     // Navigate back to company input if order is empty
     if (selectedProducts.length === 0) {
-        message.warning('Your cart is empty. Please select products first.');
+      message.warning('Your cart is empty. Please select products first.');
     }
     navigate(ROUTES.PRODUCT_SELECTION);
     return null;
@@ -41,9 +41,9 @@ const OrderSummaryPage: React.FC = () => {
     try {
       // 💡 CALL THE FIREBASE SAVE FUNCTION
       const orderId = await saveOrder(payload);
-      
+
       // Clear the context state immediately after successful save
-      clearOrder(); 
+      clearOrder();
 
       // Show success modal
       Modal.success({
@@ -85,16 +85,16 @@ const OrderSummaryPage: React.FC = () => {
             <List.Item
               actions={[
                 // Simple quantity controls
-                <Button 
-                  onClick={() => updateProductQuantity(item.id, item.quantity + 1)} 
+                <Button
+                  onClick={() => updateProductQuantity(item.id, item.quantity + 1)}
                   size="small"
                 >
                   +
                 </Button>,
                 <Text style={{ width: 20, textAlign: 'center' }}>{item.quantity}</Text>,
-                <Button 
-                  onClick={() => updateProductQuantity(item.id, item.quantity - 1)} 
-                  size="small" 
+                <Button
+                  onClick={() => updateProductQuantity(item.id, item.quantity - 1)}
+                  size="small"
                   disabled={item.quantity <= 1}
                 >
                   -
@@ -116,11 +116,11 @@ const OrderSummaryPage: React.FC = () => {
           </Col>
         </Row>
       </Card>
-      
+
       {/* Action Buttons */}
       <Row gutter={16} justify="end">
         <Col>
-          <Button 
+          <Button
             onClick={() => navigate(ROUTES.PRODUCT_SELECTION)}
             size="large"
           >
@@ -128,9 +128,9 @@ const OrderSummaryPage: React.FC = () => {
           </Button>
         </Col>
         <Col>
-          <Button 
-            type="primary" 
-            size="large" 
+          <Button
+            type="primary"
+            size="large"
             onClick={handlePlaceOrder}
           >
             Place Order
