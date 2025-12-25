@@ -3,8 +3,11 @@
 export interface Product {
   id: string;
   title: string;
+  quantityDescription: string;
   title_ar: string; 
+  City: string;
   companyName:string;
+  isSoldOut: boolean;
   price: number;
   images: string[]; 
 }

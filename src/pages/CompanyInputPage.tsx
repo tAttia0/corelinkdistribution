@@ -1,32 +1,30 @@
-// src/pages/CompanyInputPage.tsx (MODIFIED LAYOUT AND INTEGRATED FIREBASE)
+// src/pages/CompanyInputPage.tsx
 
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined, HomeOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, message, Row, Spin, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../App';
 import { useOrder } from '../context/OrderContext';
-import { getAccessCode } from '../firebase/api'; // 💡 Import the Firebase API function
+import { getAccessCode } from '../firebase/api';
 
 const { Title, Text } = Typography;
 
 const CompanyInputPage = () => {
   const navigate = useNavigate();
+  // 💡 Ensure your OrderContext has a setCity function or similar if you need to save it
   const { companyName, setCompanyName } = useOrder();
   const [form] = Form.useForm();
 
-  // --- Firebase Integration States ---
   const [validAccessCode, setValidAccessCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Initial loading state for fetching code
-  const [submitting, setSubmitting] = useState(false); // State for form submission
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  // --- Fetch Access Code from Database ---
   useEffect(() => {
     const fetchCode = async () => {
       try {
         const code = await getAccessCode();
         setValidAccessCode(code);
-
         if (!code) {
           message.error("Access code could not be loaded from settings.");
         }
@@ -39,28 +37,30 @@ const CompanyInputPage = () => {
     fetchCode();
   }, []);
 
-  // --- Form Submission Handler (Integrated Firebase Check) ---
-  const onFinish = (values: { companyName: string, accessCode: string }) => {
+  // --- Form Submission Handler ---
+  const onFinish = (values: { companyName: string, city: string, accessCode: string }) => {
     setSubmitting(true);
 
     if (values.accessCode === validAccessCode) {
+      // 💡 Save the company name (and city if your context supports it)
       setCompanyName(values.companyName);
-      message.success(`Access granted for ${values.companyName}.`);
+      
+      // If you want to store city in context, you would call: setCity(values.city);
+      
+      message.success(`Access granted for ${values.companyName} in ${values.city}.`);
       setSubmitting(false);
       navigate(ROUTES.PRODUCT_SELECTION);
     } else {
       message.error('Invalid access code.');
-      form.resetFields(['accessCode']); // Clear password field
+      form.resetFields(['accessCode']);
       setSubmitting(false);
     }
   };
 
-  // --- Styling Constants ---
-  const CARD_BACKGROUND_COLOR = 'rgb(0, 21, 41)'; // Dark background
-  const CARD_FOREGROUND_COLOR = 'white'; // White text
-  const PRIMARY_COLOR = '#1890ff'; // Default Ant Design Blue
+  const CARD_BACKGROUND_COLOR = 'rgb(0, 21, 41)';
+  const CARD_FOREGROUND_COLOR = 'white';
+  const PRIMARY_COLOR = '#1890ff';
 
-  // --- Loading / Error Rendering ---
   if (loading) {
     return (
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
@@ -70,7 +70,6 @@ const CompanyInputPage = () => {
     );
   }
 
-  // If code failed to load entirely
   if (!validAccessCode) {
     return (
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
@@ -80,9 +79,7 @@ const CompanyInputPage = () => {
     );
   }
 
-  // --- Main Render ---
   return (
-    // Use Row and Col to center the card vertically and horizontally
     <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
       <Col xs={24} sm={20} md={12} lg={8} xl={6}>
         <Card
@@ -114,6 +111,19 @@ const CompanyInputPage = () => {
               <Input
                 prefix={<UserOutlined style={{ color: PRIMARY_COLOR }} />}
                 placeholder="Enter Company Name"
+                size="large"
+              />
+            </Form.Item>
+
+            {/* 💡 NEW: City Input Field */}
+            <Form.Item
+              label={<span style={{ color: CARD_FOREGROUND_COLOR }}>City</span>}
+              name="city"
+              rules={[{ required: true, message: 'Please enter the city!' }]}
+            >
+              <Input
+                prefix={<HomeOutlined style={{ color: PRIMARY_COLOR }} />}
+                placeholder="Enter City"
                 size="large"
               />
             </Form.Item>

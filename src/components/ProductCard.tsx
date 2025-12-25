@@ -1,23 +1,21 @@
-// src/components/ProductCard.tsx (MODIFIED: Quantity Input size and limit)
+// src/components/ProductCard.tsx
 
-import React, { useState, useCallback } from 'react';
-import { Card, Button, Typography, Row, Col, InputNumber, Checkbox, Modal, Image, Badge } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Image, InputNumber, Modal, Row, Typography } from 'antd';
+import React, { useCallback, useState } from 'react';
 import type { Product } from '../types/order';
 
 const { Text } = Typography;
 
-// --- Interface Definition ---
 interface ProductCardProps {
   product: Product;
-  onProductChange: (product: Product, quantity: number) => void; 
-  initialQuantity: number; 
+  onProductChange: (product: Product, quantity: number) => void;
+  initialQuantity: number;
 }
 
-// --- Component ---
 const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, initialQuantity }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(initialQuantity > 0 ? initialQuantity : 0);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [modalVisible, setModalVisible] = useState(false);
 
   const totalImages = product.images.length;
@@ -33,54 +31,39 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
     e.stopPropagation();
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
   };
-  
-  // --- Quantity and Checkbox Handlers ---
+
+  // --- Quantity Handler ---
   const handleQuantityChange = useCallback((value: number | null) => {
     const newQuantity = value === null || value < 0 ? 0 : value;
-    // Enforce max 99 (two digits)
-    const restrictedQuantity = Math.min(newQuantity, 99); 
+    const restrictedQuantity = Math.min(newQuantity, 99);
 
     setQuantity(restrictedQuantity);
     onProductChange(product, restrictedQuantity);
   }, [product, onProductChange]);
 
-  const handleCheckboxChange = useCallback((e: any) => {
-    const isChecked = e.target.checked;
-    const newQuantity = isChecked ? 1 : 0; 
-    setQuantity(newQuantity);
-    onProductChange(product, newQuantity);
-  }, [product, onProductChange]);
-
-  const isSelected = quantity > 0;
-
   return (
     <>
-    <Badge.Ribbon text={product.companyName} style={{marginTop: '-15px'}}>
-
       <Card
         hoverable
         style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}
       >
-        
-        {/* Title Block (Above Image) */}
-        <div 
-            style={{ 
-                color: 'black', 
-                fontWeight: 'bold', 
-                textAlign: 'center', 
-                paddingBottom: '10px' 
-            }}
+        {/* Title Block */}
+        <div
+          style={{
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            paddingBottom: '10px'
+          }}
         >
-            {/* Line 1: English Title */}
-            <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.title}</Text>
-            {/* Line 2: Arabic Title */}
-            <Text strong style={{ color: 'black', display: 'block', fontSize: '0.9em' }}>{product.title_ar}</Text>
-            {/* Line 3: Price */}
-            <Text strong style={{ color: 'black', display: 'block', marginTop: '4px' }}>${product.price.toFixed(2)}</Text>
+          <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.companyName + '-' + product.title}</Text>
+          <Text strong style={{ color: 'black', display: 'block', fontSize: '0.9em' }}>{product.title_ar}</Text>
+          <Text strong style={{ color: 'black', display: 'block', fontSize: '0.7em' }}>{product.quantityDescription}</Text>
+          <Text strong style={{ color: 'black', display: 'block', marginTop: '4px' }}>${product.price.toFixed(2)}</Text>
         </div>
 
         {/* Image Cover Section */}
-        <div 
+        <div
           style={{ position: 'relative', height: 160, cursor: 'pointer', overflow: 'hidden' }}
           onClick={() => setModalVisible(true)}
         >
@@ -91,14 +74,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
           />
           {totalImages > 1 && (
             <>
-              <Button 
-                icon={<LeftOutlined />} 
+              <Button
+                icon={<LeftOutlined />}
                 size="small"
                 onClick={handlePrev}
                 style={{ position: 'absolute', left: 5, top: '50%', transform: 'translateY(-50%)' }}
               />
-              <Button 
-                icon={<RightOutlined />} 
+              <Button
+                icon={<RightOutlined />}
                 size="small"
                 onClick={handleNext}
                 style={{ position: 'absolute', right: 5, top: '50%', transform: 'translateY(-50%)' }}
@@ -106,36 +89,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
             </>
           )}
         </div>
-        
-        <Card.Meta description={null} />
 
-        {/* Checkbox and Quantity Input: Now on the same line */}
-        <Row gutter={10} align="middle" style={{ marginTop: 15 }}>
-          
-          {/* Checkbox (Takes minimal space) */}
-          <Col>
-            <Checkbox checked={isSelected} onChange={handleCheckboxChange}>
-              Select
-            </Checkbox>
-          </Col>
-          
-          {/* InputNumber (Fixed width for 2 digits) */}
-          <Col>
-            <InputNumber
-              min={isSelected ? 1 : 0} 
-              max={99} // 💡 Enforce two-digit maximum
-              value={quantity}
-              onChange={handleQuantityChange}
-              disabled={!isSelected}
-              style={{ width: '80px' }} // 💡 Set fixed width for two digits
-              size="large"
-            />
+        <Card.Meta />
+
+        {/* 💡 Quantity Input: Spans full width (same as image) */}
+        <Row style={{ marginTop: 15 }}>
+          <Col span={24}>
+            {product.isSoldOut ?
+              <Text strong style={{ color: 'white', display: 'block', fontSize: '1em', textAlign: 'center',backgroundColor:'red' }}>SOLD OUT</Text> :
+              <InputNumber
+                mode='spinner'
+                min={0}
+                max={99}
+                value={quantity}
+                onChange={handleQuantityChange}
+                style={{ width: '100%' }} // 💡 Full width to match card/image
+                size="large"
+                placeholder="Qty"
+              />
+
+            }
           </Col>
         </Row>
-      </Card>
-    </Badge.Ribbon>
+        <Row>
 
-      {/* Image Zoom Modal (Remains the same) */}
+
+        </Row>
+      </Card>
+
+      {/* Image Zoom Modal */}
       <Modal
         title={product.title}
         open={modalVisible}
@@ -144,29 +126,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
         width={400}
         centered
       >
-        <Image 
-          src={currentImageUrl} 
-          alt={product.title} 
-          preview={false} 
+        <Image
+          src={currentImageUrl}
+          alt={product.title}
+          preview={false}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         />
         <div style={{ textAlign: 'center', marginTop: 10 }}>
-            {product.images.map((img, index) => (
-                <img 
-                    key={index}
-                    src={img} 
-                    alt={`Thumbnail ${index + 1}`}
-                    style={{ 
-                        width: 50, 
-                        height: 50, 
-                        margin: 5, 
-                        objectFit: 'cover', 
-                        cursor: 'pointer',
-                        border: index === currentImageIndex ? '2px solid #1890ff' : '1px solid #ccc',
-                    }}
-                    onClick={() => setCurrentImageIndex(index)}
-                />
-            ))}
+          {product.images.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              alt={`Thumbnail ${index + 1}`}
+              style={{
+                width: 50,
+                height: 50,
+                margin: 5,
+                objectFit: 'cover',
+                cursor: 'pointer',
+                border: index === currentImageIndex ? '2px solid #1890ff' : '1px solid #ccc',
+              }}
+              onClick={() => setCurrentImageIndex(index)}
+            />
+          ))}
         </div>
       </Modal>
     </>
