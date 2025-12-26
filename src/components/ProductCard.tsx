@@ -9,11 +9,11 @@ const { Text } = Typography;
 
 interface ProductCardProps {
   product: Product;
-  onProductChange: (product: Product, quantity: number) => void;
+  addProduct: (product: Product, quantity: number) => void;
   initialQuantity: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, initialQuantity }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQuantity }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(initialQuantity);
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,8 +38,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductChange, ini
     const restrictedQuantity = Math.min(newQuantity, 99);
 
     setQuantity(restrictedQuantity);
-    onProductChange(product, restrictedQuantity);
-  }, [product, onProductChange]);
+    addProduct(product, restrictedQuantity);
+  }, [product, addProduct]);
 
   return (
     <>

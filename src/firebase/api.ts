@@ -31,22 +31,39 @@ const getImageUrl = async (path: string): Promise<string> => {
     }
 };
 
-// --- 3. Access Code Function ---
+// --- 3. App Settings Function ---
+
+// Define an interface for your settings for better TypeScript support
+export interface AppSettings {
+  accessCode: string;
+  whatsAppNumber: string;
+  // You can add more fields here later (e.g., currency, taxRate, etc.)
+}
+
+
+// --- 4. Access Code Function ---
 
 /**
- * Fetches the required access code from the 'settings/app_control' document.
+ * Fetches the entire application configuration from 'settings/app_control'.
  */
-export const getAccessCode = async (): Promise<string | null> => {
+export const getAppSettings = async (): Promise<AppSettings | null> => {
   try {
+    // Note: I kept 'app_control' to match your previous code snippet
     const docRef = doc(db, 'settings', 'app_control'); 
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data().accessCode || null; 
+      const data = docSnap.data();
+      return {
+        accessCode: data.accessCode || '',
+        whatsAppNumber: data.whatsAppNumber || '',
+      };
     }
+    
+    console.warn("Settings document 'settings/app_control' not found.");
     return null;
   } catch (error) {
-    console.error("Error fetching access code:", error);
+    console.error("Error fetching app settings:", error);
     return null;
   }
 };

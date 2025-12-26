@@ -107,7 +107,7 @@ const ProductSelectionPage = () => {
               <ProductCard
                 product={product}
                 // 💡 FIX: Using the new prop names required by the modified ProductCard
-                onProductChange={handleProductChange}
+                addProduct={handleProductChange}
                 initialQuantity={getProductQuantity(product.id)}
               />
             </Col>

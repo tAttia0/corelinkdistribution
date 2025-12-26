@@ -8,6 +8,7 @@ import type { Product, OrderState, OrderContextType, SelectedProduct } from '../
 
 const initialOrderState: OrderState = {
   companyName: null, // Initialized as null for explicit check
+  whatsappNumber: null,
   selectedProducts: [],
 };
 
@@ -24,6 +25,11 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
   const setCompanyName = (name: string | null) => {
     setOrder(prev => ({ ...prev, companyName: name }));
   };
+
+  const setWhatsappNumber = (number: string) => {
+    setOrder(prev => ({ ...prev, whatsappNumber: number }));
+  };
+
 
   /**
    * Function to add a product or update its quantity.
@@ -75,15 +81,20 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
     }
   };
 
-  // Function to clear the order state (for "Place Order" success or reset)
+  // Function to clear the order state (Modified to preserve the global WhatsApp number)
   const clearOrder = () => {
-    setOrder(initialOrderState);
+    setOrder(prev => ({
+      ...initialOrderState,
+      whatsappNumber: prev.whatsappNumber, // 💡 Keep the number so it stays "Global"
+    }));
   };
 
   const contextValue: OrderContextType = {
     companyName: order.companyName,
+    whatsappNumber: order.whatsappNumber,
     selectedProducts: order.selectedProducts,
     setCompanyName,
+    setWhatsappNumber,
     addProduct, // 💡 FIX: Exposing the function expected by ProductSelectionPage.tsx
     updateProductQuantity,
     clearOrder,

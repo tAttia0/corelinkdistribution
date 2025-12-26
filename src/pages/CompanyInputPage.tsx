@@ -1,19 +1,19 @@
 // src/pages/CompanyInputPage.tsx
 
-import { LockOutlined, UserOutlined, HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, message, Row, Spin, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../App';
 import { useOrder } from '../context/OrderContext';
-import { getAccessCode } from '../firebase/api';
+import { getAppSettings } from '../firebase/api';
 
 const { Title, Text } = Typography;
 
 const CompanyInputPage = () => {
   const navigate = useNavigate();
   // 💡 Ensure your OrderContext has a setCity function or similar if you need to save it
-  const { companyName, setCompanyName } = useOrder();
+  const { companyName, setCompanyName,setWhatsappNumber } = useOrder();
   const [form] = Form.useForm();
 
   const [validAccessCode, setValidAccessCode] = useState<string | null>(null);
@@ -21,20 +21,26 @@ const CompanyInputPage = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchCode = async () => {
+    const fetchSettings = async () => {
       try {
-        const code = await getAccessCode();
-        setValidAccessCode(code);
-        if (!code) {
-          message.error("Access code could not be loaded from settings.");
+        // 💡 Call the new function
+        const settings = await getAppSettings();
+
+        if (settings) {
+          setValidAccessCode(settings.accessCode);
+          setWhatsappNumber(settings.whatsAppNumber)
+          // If you need to store the WhatsApp number globally early on, 
+          // you could do it here, but usually, it's fetched on the Summary Page.
+        } else {
+          message.error("Configuration could not be loaded.");
         }
       } catch (error) {
-        message.error("Failed to connect to the database to load access code.");
+        message.error("Database connection failed.");
       } finally {
         setLoading(false);
       }
     };
-    fetchCode();
+    fetchSettings();
   }, []);
 
   // --- Form Submission Handler ---
@@ -44,9 +50,9 @@ const CompanyInputPage = () => {
     if (values.accessCode === validAccessCode) {
       // 💡 Save the company name (and city if your context supports it)
       setCompanyName(values.companyName);
-      
+
       // If you want to store city in context, you would call: setCity(values.city);
-      
+
       message.success(`Access granted for ${values.companyName} in ${values.city}.`);
       setSubmitting(false);
       navigate(ROUTES.PRODUCT_SELECTION);

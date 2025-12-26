@@ -37,7 +37,7 @@ const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subto
         <Card size="small" style={{ marginBottom: 16 }} key={item.id}>
           <Row justify="space-between" align="top" gutter={[16, 8]}>
             <Col flex="auto">
-              <Text strong style={{ fontSize: '1.1em' }}>{item.title}</Text>
+              <Text strong style={{ fontSize: '1.1em' }}>{item.companyName + '-' + item.title + ' ' + item.quantityDescription}</Text>
               {/* 💡 NEW: Arabic Description below the product title */}
               <Text 
                 type="secondary" 
@@ -79,17 +79,18 @@ const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subto
             
             {/* Quantity Input */}
             <Col xs={24}>
-              <Row gutter={8} align="middle">
+              <Row gutter={8} align="middle" wrap={false}>
                 <Col style={{ whiteSpace: 'nowrap' }}>
                   <Text type="secondary">Quantity:</Text>
                 </Col>
                 <Col flex="auto">
                   <InputNumber
+                    mode='spinner'
                     min={1}
                     max={999}
                     value={item.quantity}
                     onChange={(value) => handleQuantityChange(item.id, value)}
-                    style={{ width: '100%' }}
+                    // style={{ width: '100%' }}
                   />
                 </Col>
               </Row>

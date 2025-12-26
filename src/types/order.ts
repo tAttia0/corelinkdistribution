@@ -18,15 +18,15 @@ export interface SelectedProduct extends Product {
 
 export interface OrderState {
   companyName: string | null;
+  whatsappNumber: string | null;
   selectedProducts: SelectedProduct[];
 }
 
 export interface OrderContextType extends OrderState {
   setCompanyName: (name: string | null) => void; // Allow setting back to null/clearing
-  
+  setWhatsappNumber: (number: string) => void;
   // 💡 FIX 2: Changed to 'addProduct' to match the component and context implementation
   addProduct: (product: Product, quantity: number) => void; 
-  
   updateProductQuantity: (productId: string, quantity: number) => void;
   clearOrder: () => void;
 }
