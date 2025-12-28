@@ -1,36 +1,36 @@
-import { CheckCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Divider, List, message, Modal, Row, Typography, InputNumber } from 'antd';
-import { useMemo, useEffect, useState } from 'react';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Divider, InputNumber, List, message, Popconfirm, Row, Typography } from 'antd';
+import { doc, getDoc, getFirestore, increment, setDoc } from 'firebase/firestore';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../App';
+import MobileOrderSummary from '../components/MobileOrderSummary';
 import { useOrder } from '../context/OrderContext';
-import { saveOrder, getAppSettings, type OrderPayload } from '../firebase/api';
-import MobileOrderSummary from '../components/MobileOrderSummary'; // 💡 Import your mobile component
+import { getAppSettings } from '../firebase/api';
 
 const { Title, Text } = Typography;
 
 const OrderSummaryPage = () => {
   const navigate = useNavigate();
-  const { 
-    companyName, 
-    selectedProducts, 
-    updateProductQuantity, 
-    clearOrder, 
-    whatsappNumber, 
-    setWhatsappNumber 
+  const {
+    companyName,
+    city,
+    selectedProducts,
+    updateProductQuantity,
+    clearOrder,
+    whatsappNumber,
+    setWhatsappNumber
   } = useOrder();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // --- 💡 Responsive Listener ---
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- 💡 State Auto-Heal Hook ---
   useEffect(() => {
     const syncSettings = async () => {
       if (!whatsappNumber) {
@@ -47,86 +47,86 @@ const OrderSummaryPage = () => {
     syncSettings();
   }, [whatsappNumber, setWhatsappNumber]);
 
-  // Calculations for Mobile Props
+  // --- Logic: Generate Daily Order ID (YYYYMMDD_SN) ---
+  const getOrderIdentifier = async () => {
+    const db = getFirestore();
+    const now = new Date();
+    const dateKey = now.toISOString().split('T')[0].replace(/-/g, '');
+
+    const counterRef = doc(db, 'settings', 'order_counters');
+
+    try {
+      await setDoc(counterRef, { [dateKey]: increment(1) }, { merge: true });
+      const snap = await getDoc(counterRef);
+      const sn = snap.data()?.[dateKey] || 1;
+      return `${dateKey}_${sn.toString().padStart(2, '0')}`;
+    } catch (e) {
+      console.error("Counter error:", e);
+      return `${dateKey}_${Math.floor(Math.random() * 90 + 10)}`;
+    }
+  };
+
   const subtotal = useMemo(() => {
     return selectedProducts.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [selectedProducts]);
 
-  const tax = subtotal * 0.13; // 13% HST as per your Mobile component
-  const grandTotal = subtotal + tax;
-
   if (!companyName || selectedProducts.length === 0) {
-    if (selectedProducts.length === 0) {
-      message.warning('Your cart is empty.');
-    }
     navigate(ROUTES.PRODUCT_SELECTION);
     return null;
   }
 
-  const sendWhatsAppMessage = (orderId: string) => {
+  const handleSendWhatsApp = async () => {
     if (!whatsappNumber) {
-      message.error("WhatsApp number is still loading.");
+      message.warning("WhatsApp number is still loading...");
       return;
-    }
-
-    const cleanNumber = whatsappNumber.replace(/\D/g, '');
-
-    let msg = `*📦 NEW ORDER RECEIVED*%0A`;
-    msg += `--------------------------%0A`;
-    msg += `*Order ID:* ${orderId}%0A`;
-    msg += `*Customer:* ${companyName}%0A`;
-    msg += `--------------------------%0A`;
-
-    selectedProducts.forEach((item) => {
-      msg += `• ${item.title + ' ' + item.quantityDescription} (${item.title_ar})%0A`;
-      msg += `  Qty: ${item.quantity} | Total: $${(item.price * item.quantity).toFixed(2)}%0A`;
-    });
-
-    msg += `--------------------------%0A`;
-    msg += `*TOTAL AMOUNT: $${grandTotal.toFixed(2)}*%0A`; // 💡 Using Grand Total
-    msg += `--------------------------%0A`;
-    msg += `_Your order is confirmed._`;
-
-    const whatsappUrl = `https://wa.me/${cleanNumber}?text=${msg}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  const handlePlaceOrder = async () => {
-    if (!whatsappNumber) {
-        message.warning("System settings are still loading...");
-        return;
     }
 
     setIsSubmitting(true);
 
-    const payload: OrderPayload = {
-      companyName: companyName,
-      selectedProducts: selectedProducts,
-      totalAmount: grandTotal, // 💡 Save the grand total
-    };
-
     try {
-      const orderId = await saveOrder(payload);
-
-      Modal.success({
-        title: 'Order Saved Successfully!',
-        icon: <CheckCircleOutlined />,
-        content: (
-          <div>
-            <p>Order for **{companyName}** has been saved.</p>
-            <p>Click **OK** to send via WhatsApp.</p>
-          </div>
-        ),
-        onOk() {
-          sendWhatsAppMessage(orderId);
-          clearOrder();
-          navigate(ROUTES.COMPANY_INPUT);
-        },
+      const orderId = await getOrderIdentifier();
+      const now = new Date();
+      const orderDate = now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
       });
 
+      const cleanNumber = whatsappNumber.replace(/\D/g, '');
+      const separator = String.fromCharCode(45).repeat(50) + '%0A';
+      const tab = '%20%20%20%20%20%20';
+
+      let msg = `*NEW ORDER RECEIVED*%0A`;
+      msg += separator;
+      msg += `*Order ID:* ${orderId}%0A`;
+      msg += `*Date:* ${orderDate}%0A`;
+      msg += `*Customer:* ${companyName}%0A`;
+      msg += `*City:* ${city || 'Not Specified'}%0A`;
+      msg += separator;
+
+      selectedProducts.forEach((item) => {
+        const soldOutTag = item.isSoldOut ? ' [SOLD OUT]' : '';
+        const desc = item.quantityDescription ? ` - ${item.quantityDescription}` : '';
+        const title_ar = item.title_ar ? ` - ${item.title_ar}` : '';
+        msg += `• *${item.title}${desc}${title_ar}*%0A`;
+        msg += `${tab}Qty: ${item.quantity} | Total: $${(item.price * item.quantity).toFixed(2)}${soldOutTag}%0A`;
+      });
+
+      msg += separator;
+      msg += `*Subtotal:* $${subtotal.toFixed(2)}%0A`;
+      msg += `*Tax will be added if applicable.%0A`;
+      msg += separator;
+      msg += `_Your order is confirmed._`;
+
+      const whatsappUrl = `https://wa.me/${cleanNumber}?text=${msg}`;
+      window.open(whatsappUrl, '_blank');
+
+      clearOrder();
+      navigate(ROUTES.COMPANY_INPUT);
+      message.success("WhatsApp opened and order cleared.");
     } catch (error) {
-      message.error(`Failed to place order.`);
-      console.error(error);
+      message.error("Error processing order.");
     } finally {
       setIsSubmitting(false);
     }
@@ -136,16 +136,13 @@ const OrderSummaryPage = () => {
     <div style={{ padding: isMobile ? '10px' : '20px', maxWidth: '800px', margin: '0 auto' }}>
       <Title level={isMobile ? 3 : 2} style={{ marginBottom: 8 }}>Step 2: Order Summary</Title>
       <Text type="secondary" style={{ display: 'block', marginBottom: 24 }}>
-        Finalizing order for: <Text strong>{companyName}</Text>
+        Order for: <Text strong>{companyName}</Text> {city && `(${city})`}
       </Text>
 
-      {/* 💡 CONDITIONAL RENDERING: Mobile vs Desktop */}
       {isMobile ? (
-        <MobileOrderSummary 
+        <MobileOrderSummary
           products={selectedProducts}
           subtotal={subtotal}
-          tax={tax}
-          grandTotal={grandTotal}
         />
       ) : (
         <Card title="Order Items" style={{ marginBottom: 20 }}>
@@ -156,16 +153,42 @@ const OrderSummaryPage = () => {
               <List.Item
                 actions={[
                   <InputNumber
+                    mode='spinner'
                     min={1}
-                    max={999}
+                    max={99}
                     value={item.quantity}
                     onChange={(value) => updateProductQuantity(item.id, value || 1)}
-                    style={{ width: '80px' }}
-                  />
+                    style={{
+                      width: '120px',
+                      border: item.isSoldOut ? '1px solid red' : undefined
+                    }}
+                  />,
+                  <Popconfirm
+                    title="Remove this item?"
+                    onConfirm={() => updateProductQuantity(item.id, 0)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined style={{ fontSize: '18px' }} />}
+                    />
+                  </Popconfirm>
                 ]}
               >
                 <List.Item.Meta
-                  title={`${item.title} ${item.quantityDescription || ''}`}
+                  title={
+                    <span>
+                      {`${item.title} ${item.quantityDescription || ''}`}
+                      {item.isSoldOut && (
+                        <Badge
+                          count="SOLD OUT"
+                          style={{ backgroundColor: 'red', marginLeft: 10, fontSize: '10px' }}
+                        />
+                      )}
+                    </span>
+                  }
                   description={item.title_ar}
                 />
                 <Text strong style={{ minWidth: '80px', textAlign: 'right' }}>
@@ -177,13 +200,10 @@ const OrderSummaryPage = () => {
           <Divider />
           <Row gutter={[0, 8]}>
             <Col span={24} style={{ textAlign: 'right' }}>
-              <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
+              <Text strong style={{ fontSize: '1.2em' }}>Total: ${subtotal.toFixed(2)}</Text>
             </Col>
             <Col span={24} style={{ textAlign: 'right' }}>
-              <Text type="secondary">HST (13%): ${tax.toFixed(2)}</Text>
-            </Col>
-            <Col span={24} style={{ textAlign: 'right' }}>
-              <Title level={4} style={{ margin: 0 }}>Total: ${grandTotal.toFixed(2)}</Title>
+              <Text type="secondary">Tax will be added if applicable.</Text>
             </Col>
           </Row>
         </Card>
@@ -196,10 +216,10 @@ const OrderSummaryPage = () => {
           </Button>
         </Col>
         <Col xs={24} sm={12} md={10}>
-          <Button 
-            type="primary" 
-            size="large" 
-            onClick={handlePlaceOrder}
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleSendWhatsApp}
             loading={isSubmitting}
             disabled={!whatsappNumber}
             block

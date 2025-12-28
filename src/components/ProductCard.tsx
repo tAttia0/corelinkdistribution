@@ -1,7 +1,7 @@
 // src/components/ProductCard.tsx
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Image, InputNumber, Modal, Row, Typography } from 'antd';
+import { Badge, Button, Card, Col, Image, InputNumber, Modal, Row, Typography } from 'antd';
 import React, { useCallback, useState } from 'react';
 import type { Product } from '../types/order';
 
@@ -42,7 +42,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
   }, [product, addProduct]);
 
   return (
-    <>
+    <Badge.Ribbon
+      text={product.isSoldOut ? 'SOLD OUT' : 'IN STOCK'}
+      color={product.isSoldOut ? 'red' : 'blue'} 
+      style={{ marginTop: '-15px' }}>
       <Card
         hoverable
         style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}
@@ -95,20 +98,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
         {/* 💡 Quantity Input: Spans full width (same as image) */}
         <Row style={{ marginTop: 15 }}>
           <Col span={24}>
-            {product.isSoldOut ?
-              <Text strong style={{ color: 'white', display: 'block', fontSize: '1em', textAlign: 'center',backgroundColor:'red' }}>SOLD OUT</Text> :
+            
               <InputNumber
                 mode='spinner'
                 min={0}
                 max={99}
                 value={quantity}
                 onChange={handleQuantityChange}
-                style={{ width: '100%' }} // 💡 Full width to match card/image
+                style={{ width: '100%',border: product.isSoldOut ? '2px solid red' : undefined }} // 💡 Full width to match card/image
                 size="large"
                 placeholder="Qty"
               />
 
-            }
+            
           </Col>
         </Row>
         <Row>
@@ -151,7 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
           ))}
         </div>
       </Modal>
-    </>
+    </Badge.Ribbon>
   );
 };
 

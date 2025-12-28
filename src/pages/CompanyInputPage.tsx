@@ -1,5 +1,3 @@
-// src/pages/CompanyInputPage.tsx
-
 import { HomeOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, message, Row, Spin, Typography } from 'antd';
 import { useEffect, useState } from 'react';
@@ -12,8 +10,9 @@ const { Title, Text } = Typography;
 
 const CompanyInputPage = () => {
   const navigate = useNavigate();
-  // 💡 Ensure your OrderContext has a setCity function or similar if you need to save it
-  const { companyName, setCompanyName,setWhatsappNumber } = useOrder();
+  
+  // 💡 ADDED: setCity to the destructuring
+  const { companyName, setCompanyName, setCity, setWhatsappNumber } = useOrder();
   const [form] = Form.useForm();
 
   const [validAccessCode, setValidAccessCode] = useState<string | null>(null);
@@ -23,14 +22,11 @@ const CompanyInputPage = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        // 💡 Call the new function
         const settings = await getAppSettings();
 
         if (settings) {
           setValidAccessCode(settings.accessCode);
-          setWhatsappNumber(settings.whatsAppNumber)
-          // If you need to store the WhatsApp number globally early on, 
-          // you could do it here, but usually, it's fetched on the Summary Page.
+          setWhatsappNumber(settings.whatsAppNumber);
         } else {
           message.error("Configuration could not be loaded.");
         }
@@ -41,17 +37,16 @@ const CompanyInputPage = () => {
       }
     };
     fetchSettings();
-  }, []);
+  }, [setWhatsappNumber]);
 
   // --- Form Submission Handler ---
   const onFinish = (values: { companyName: string, city: string, accessCode: string }) => {
     setSubmitting(true);
 
     if (values.accessCode === validAccessCode) {
-      // 💡 Save the company name (and city if your context supports it)
+      // 💡 FIXED: Save BOTH company name and city to the global context
       setCompanyName(values.companyName);
-
-      // If you want to store city in context, you would call: setCity(values.city);
+      setCity(values.city); 
 
       message.success(`Access granted for ${values.companyName} in ${values.city}.`);
       setSubmitting(false);
@@ -121,7 +116,7 @@ const CompanyInputPage = () => {
               />
             </Form.Item>
 
-            {/* 💡 NEW: City Input Field */}
+            {/* City Input Field */}
             <Form.Item
               label={<span style={{ color: CARD_FOREGROUND_COLOR }}>City</span>}
               name="city"

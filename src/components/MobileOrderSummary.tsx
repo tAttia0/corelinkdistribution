@@ -1,27 +1,25 @@
-// src/components/MobileOrderSummary.tsx (FINAL WITH ARABIC DESCRIPTION)
-import React from 'react';
-import { Card, Typography, InputNumber, Row, Col, Divider, Button, message } from 'antd';
-import type { SelectedProduct } from '../types/order';
-import { useOrder } from '../context/OrderContext';
+// src/components/MobileOrderSummary.tsx
 import { DeleteOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Divider, InputNumber, message, Row, Typography } from 'antd';
+import React from 'react';
+import { useOrder } from '../context/OrderContext';
+import type { SelectedProduct } from '../types/order';
 
 const { Text, Title } = Typography;
 
 interface MobileOrderSummaryProps {
   products: SelectedProduct[];
   subtotal: number;
-  tax: number;
-  grandTotal: number;
 }
 
-const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subtotal, tax, grandTotal }) => {
+const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subtotal }) => {
   const { updateProductQuantity } = useOrder();
 
   const handleQuantityChange = (productId: string, value: number | null) => {
     const newQuantity = value === null ? 0 : value;
     updateProductQuantity(productId, newQuantity);
     if (newQuantity <= 0) {
-        message.warning('Product removed from the order.');
+      message.warning('Product removed from the order.');
     }
   };
   
@@ -35,23 +33,39 @@ const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subto
       {/* Product Cards Loop */}
       {products.map((item) => (
         <Card size="small" style={{ marginBottom: 16 }} key={item.id}>
-          <Row justify="space-between" align="top" gutter={[16, 8]}>
-            <Col flex="auto">
-              <Text strong style={{ fontSize: '1.1em' }}>{item.companyName + '-' + item.title + ' ' + item.quantityDescription}</Text>
-              {/* 💡 NEW: Arabic Description below the product title */}
-              <Text 
-                type="secondary" 
-                style={{ 
+          {/* 💡 Main Row: Keeps Title/Badge on left and Delete on right */}
+          <Row justify="space-between" align="middle" wrap={false} gutter={[8, 0]}>
+            <Col flex="auto" style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <Text strong style={{ fontSize: '1.1em', marginRight: 8 }}>
+                    {item.companyName + '-' + item.title + ' ' + item.quantityDescription}
+                  </Text>
+                  
+                  {/* 💡 SOLD OUT Badge stays inline with text */}
+                  {item.isSoldOut && (
+                    <Badge
+                      count="SOLD OUT"
+                      style={{ backgroundColor: 'red', fontSize: '10px', verticalAlign: 'middle' }}
+                    />
+                  )}
+                </div>
+                
+                {/* Arabic Title stays below but in the same left column */}
+                <Text 
+                  type="secondary" 
+                  style={{ 
                     display: 'block', 
-                    direction: 'rtl', 
-                    textAlign: 'right', 
-                    fontSize: '0.9em' 
-                }}
-              >
-                {item.title_ar}
-              </Text>
+                    fontSize: '0.9em',
+                    marginTop: 2 
+                  }}
+                >
+                  {item.title_ar}
+                </Text>
+              </div>
             </Col>
-            <Col>
+
+            <Col flex="none">
               <Button 
                 type="text" 
                 danger 
@@ -87,10 +101,13 @@ const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subto
                   <InputNumber
                     mode='spinner'
                     min={1}
-                    max={999}
+                    max={99}
                     value={item.quantity}
                     onChange={(value) => handleQuantityChange(item.id, value)}
-                    // style={{ width: '100%' }}
+                    style={{ 
+                      width: '100%',
+                      border: item.isSoldOut ? '1px solid red' : undefined
+                    }}
                   />
                 </Col>
               </Row>
@@ -101,42 +118,23 @@ const MobileOrderSummary: React.FC<MobileOrderSummaryProps> = ({ products, subto
       
       {/* Grand Total Summary Card */}
       <Card size="default" style={{ marginTop: 24, border: '2px solid #1890ff' }}>
-        
-        {/* Subtotal Row */}
         <Row justify="space-between" align="middle" style={{ marginBottom: 8 }}>
           <Col>
-            <Text>Subtotal:</Text>
+            <Text>Total:</Text>
           </Col>
           <Col>
-            <Text strong>${subtotal.toFixed(2)}</Text>
+            <Text strong style={{ fontSize: '1.2em' }}>${subtotal.toFixed(2)}</Text>
           </Col>
         </Row>
 
-        {/* Tax Row */}
-        <Row justify="space-between" align="middle" style={{ marginBottom: 12 }}>
-          <Col>
-            <Text type="secondary">HST (13% CAD):</Text>
-          </Col>
-          <Col>
-            <Text type="secondary">${tax.toFixed(2)}</Text>
+        <Row justify="space-between" align="middle" style={{ marginBottom: 4 }}>
+          <Col span={24}>
+            <Text type="secondary">Tax will be added if applicable.</Text>
           </Col>
         </Row>
         
         <Divider style={{ margin: '8px 0' }}/>
-        
-        {/* Grand Total Row */}
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={3} style={{ margin: 0 }}>Grand Total:</Title>
-          </Col>
-          <Col>
-            <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
-              ${grandTotal.toFixed(2)}
-            </Title>
-          </Col>
-        </Row>
       </Card>
-      
     </div>
   );
 };
