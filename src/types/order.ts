@@ -5,7 +5,7 @@ export interface Product {
   title: string;
   quantityDescription: string;
   title_ar: string; 
-  City: string;
+  city: string;
   companyName:string;
   isSoldOut: boolean;
   price: number;
@@ -18,12 +18,14 @@ export interface SelectedProduct extends Product {
 
 export interface OrderState {
   companyName: string | null;
+  city: string | null;
   whatsappNumber: string | null;
   selectedProducts: SelectedProduct[];
 }
 
 export interface OrderContextType extends OrderState {
   setCompanyName: (name: string | null) => void; // Allow setting back to null/clearing
+  setCity: (city: string | null) => void;
   setWhatsappNumber: (number: string) => void;
   // 💡 FIX 2: Changed to 'addProduct' to match the component and context implementation
   addProduct: (product: Product, quantity: number) => void; 

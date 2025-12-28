@@ -58,7 +58,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
         >
           <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.companyName + '-' + product.title}</Text>
           <Text strong style={{ color: 'black', display: 'block', fontSize: '0.9em' }}>{product.title_ar}</Text>
-          <Text strong style={{ color: 'black', display: 'block', fontSize: '0.7em' }}>{product.quantityDescription}</Text>
+          <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.quantityDescription}</Text>
           <Text strong style={{ color: 'black', display: 'block', marginTop: '4px' }}>${product.price.toFixed(2)}</Text>
         </div>
 

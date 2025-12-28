@@ -8,6 +8,7 @@ import type { Product, OrderState, OrderContextType, SelectedProduct } from '../
 
 const initialOrderState: OrderState = {
   companyName: null, // Initialized as null for explicit check
+  city: null,
   whatsappNumber: null,
   selectedProducts: [],
 };
@@ -24,6 +25,10 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
   // Function to set the company name
   const setCompanyName = (name: string | null) => {
     setOrder(prev => ({ ...prev, companyName: name }));
+  };
+
+  const setCity = (cityName: string | null) => {
+    setOrder(prev => ({ ...prev, city: cityName }));
   };
 
   const setWhatsappNumber = (number: string) => {
@@ -91,9 +96,11 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
 
   const contextValue: OrderContextType = {
     companyName: order.companyName,
+    city: order.city,
     whatsappNumber: order.whatsappNumber,
     selectedProducts: order.selectedProducts,
     setCompanyName,
+    setCity,
     setWhatsappNumber,
     addProduct, // 💡 FIX: Exposing the function expected by ProductSelectionPage.tsx
     updateProductQuantity,

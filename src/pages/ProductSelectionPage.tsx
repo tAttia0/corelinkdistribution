@@ -1,6 +1,6 @@
 // src/pages/ProductSelectionPage.tsx
 
-import { ArrowRightOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { ForwardOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { Alert, Button, Col, Empty, message, Row, Spin, Typography } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -89,7 +89,7 @@ const ProductSelectionPage = () => {
   return (
     <div>
       <Title level={2} style={{ marginBottom: 8 }}>
-        Step 2: Product Selection
+        Step 1: Product Selection
       </Title>
       <Alert title={"Placing order for: " + companyName} style={{ display: 'block', marginBottom: 24 }} type="info" />
 
@@ -141,7 +141,7 @@ const ProductSelectionPage = () => {
               onClick={handleProceedToSummary}
               disabled={totalItems === 0}
             >
-              Proceed to Summary ({totalItems}) <ArrowRightOutlined />
+              next ({totalItems}) <ForwardOutlined />
             </Button>
           </Col>
         </Row>

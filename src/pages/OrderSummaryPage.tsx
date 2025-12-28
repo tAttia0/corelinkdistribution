@@ -78,14 +78,14 @@ const OrderSummaryPage = () => {
     msg += `--------------------------%0A`;
 
     selectedProducts.forEach((item) => {
-      msg += `• ${item.title} (${item.title_ar})%0A`;
+      msg += `• ${item.title + ' ' + item.quantityDescription} (${item.title_ar})%0A`;
       msg += `  Qty: ${item.quantity} | Total: $${(item.price * item.quantity).toFixed(2)}%0A`;
     });
 
     msg += `--------------------------%0A`;
     msg += `*TOTAL AMOUNT: $${grandTotal.toFixed(2)}*%0A`; // 💡 Using Grand Total
     msg += `--------------------------%0A`;
-    msg += `_Please confirm receipt._`;
+    msg += `_Your order is confirmed._`;
 
     const whatsappUrl = `https://wa.me/${cleanNumber}?text=${msg}`;
     window.open(whatsappUrl, '_blank');
@@ -134,7 +134,7 @@ const OrderSummaryPage = () => {
 
   return (
     <div style={{ padding: isMobile ? '10px' : '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <Title level={isMobile ? 3 : 2} style={{ marginBottom: 8 }}>Step 3: Order Summary</Title>
+      <Title level={isMobile ? 3 : 2} style={{ marginBottom: 8 }}>Step 2: Order Summary</Title>
       <Text type="secondary" style={{ display: 'block', marginBottom: 24 }}>
         Finalizing order for: <Text strong>{companyName}</Text>
       </Text>
@@ -204,7 +204,7 @@ const OrderSummaryPage = () => {
             disabled={!whatsappNumber}
             block
           >
-            Place Order & Send WhatsApp
+            Send WhatsApp
           </Button>
         </Col>
       </Row>
