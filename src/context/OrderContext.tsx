@@ -1,13 +1,12 @@
 // src/context/OrderContext.tsx
 
-import { createContext, useState, useContext, type ReactNode } from 'react';
-// Assuming your types file exports all necessary interfaces
-import type { Product, OrderState, OrderContextType, SelectedProduct } from '../types/order'; 
+import { createContext, useContext, useState, type ReactNode } from 'react';
+import type { OrderContextType, OrderState, Product, SelectedProduct } from '../types/order';
 
 // --- Initial State ---
 
 const initialOrderState: OrderState = {
-  companyName: null, // Initialized as null for explicit check
+  companyName: null,
   city: null,
   whatsappNumber: null,
   selectedProducts: [],
@@ -19,7 +18,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 // --- Provider Component ---
 
-export const OrderProvider = ({ children}: {children: ReactNode}) => {
+export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [order, setOrder] = useState<OrderState>(initialOrderState);
 
   // Function to set the company name
@@ -35,48 +34,50 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
     setOrder(prev => ({ ...prev, whatsappNumber: number }));
   };
 
-
   /**
    * Function to add a product or update its quantity.
-   * This is equivalent to your previous toggleProduct logic where quantity > 0.
-   * This handles the required 'addProduct' signature.
+   * Fixed: Now correctly removes the product if quantity is 0.
    */
   const addProduct = (product: Product, quantity: number) => {
-    if (quantity <= 0) return; // Only adds/updates if quantity is positive
-
     setOrder(prev => {
       const existingProduct = prev.selectedProducts.find(p => p.id === product.id);
 
+      // 1. Handle Removal (If quantity is 0 or less)
+      if (quantity <= 0) {
+        if (!existingProduct) return prev; // Nothing to remove
+        return {
+          ...prev,
+          selectedProducts: prev.selectedProducts.filter(p => p.id !== product.id),
+        };
+      }
+
+      // 2. Handle Update (If product exists)
       if (existingProduct) {
-        // If the product exists, update its quantity
         return {
           ...prev,
           selectedProducts: prev.selectedProducts.map(p =>
             p.id === product.id ? { ...p, quantity: quantity } : p
           ),
         };
-      } else {
-        // If the product is new, add it
-        const newSelectedProduct: SelectedProduct = { ...product, quantity };
-        return {
-          ...prev,
-          selectedProducts: [...prev.selectedProducts, newSelectedProduct],
-        };
       }
+
+      // 3. Handle Add (If product is new)
+      const newSelectedProduct: SelectedProduct = { ...product, quantity };
+      return {
+        ...prev,
+        selectedProducts: [...prev.selectedProducts, newSelectedProduct],
+      };
     });
   };
 
-
-  // Function to update quantity of an already selected product (used on summary page)
+  // Function to update quantity on the summary page
   const updateProductQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
-      // If quantity is 0 or less, remove the product
       setOrder(prev => ({
         ...prev,
         selectedProducts: prev.selectedProducts.filter(p => p.id !== productId),
       }));
     } else {
-      // Update quantity
       setOrder(prev => ({
         ...prev,
         selectedProducts: prev.selectedProducts.map(p =>
@@ -86,11 +87,11 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
     }
   };
 
-  // Function to clear the order state (Modified to preserve the global WhatsApp number)
+  // Function to clear the order state while preserving the WhatsApp number
   const clearOrder = () => {
     setOrder(prev => ({
       ...initialOrderState,
-      whatsappNumber: prev.whatsappNumber, // 💡 Keep the number so it stays "Global"
+      whatsappNumber: prev.whatsappNumber,
     }));
   };
 
@@ -102,7 +103,7 @@ export const OrderProvider = ({ children}: {children: ReactNode}) => {
     setCompanyName,
     setCity,
     setWhatsappNumber,
-    addProduct, // 💡 FIX: Exposing the function expected by ProductSelectionPage.tsx
+    addProduct,
     updateProductQuantity,
     clearOrder,
   };

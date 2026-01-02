@@ -1,8 +1,7 @@
 // src/components/ProductCard.tsx
-
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Image, InputNumber, Modal, Row, Typography } from 'antd';
-import React, { useCallback, useState } from 'react';
+import { LeftOutlined, MinusOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Image, Modal, Typography } from 'antd';
+import React, { useState } from 'react';
 import type { Product } from '../types/order';
 
 const { Text } = Typography;
@@ -21,7 +20,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
   const totalImages = product.images.length;
   const currentImageUrl = totalImages > 0 ? product.images[currentImageIndex] : 'https://via.placeholder.com/300x200?text=No+Image';
 
-  // --- Image Navigation ---
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + totalImages) % totalImages);
@@ -32,37 +30,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
   };
 
-  // --- Quantity Handler ---
-  const handleQuantityChange = useCallback((value: number | null) => {
-    const newQuantity = value === null || value < 0 ? 0 : value;
-    const restrictedQuantity = Math.min(newQuantity, 99);
+  // 💡 Handlers for the Custom Buttons
+  const increment = () => {
+    const newQty = Math.min(quantity + 1, 99);
+    setQuantity(newQty);
+    addProduct(product, newQty);
+  };
 
-    setQuantity(restrictedQuantity);
-    addProduct(product, restrictedQuantity);
-  }, [product, addProduct]);
+  const decrement = () => {
+    const newQty = Math.max(quantity - 1, 0);
+    setQuantity(newQty);
+    addProduct(product, newQty);
+  };
 
   return (
     <Badge.Ribbon
       text={product.isSoldOut ? 'SOLD OUT' : 'IN STOCK'}
-      color={product.isSoldOut ? 'red' : 'blue'} 
+      color={product.isSoldOut ? 'red' : 'blue'}
       style={{ marginTop: '-15px' }}>
       <Card
         hoverable
         style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}
       >
         {/* Title Block */}
-        <div
-          style={{
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            paddingBottom: '10px'
-          }}
-        >
-          <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.companyName + '-' + product.title}</Text>
-          <Text strong style={{ color: 'black', display: 'block', fontSize: '0.9em' }}>{product.title_ar}</Text>
-          <Text strong style={{ color: 'black', display: 'block', fontSize: '1em' }}>{product.quantityDescription}</Text>
-          <Text strong style={{ color: 'black', display: 'block', marginTop: '4px' }}>${product.price.toFixed(2)}</Text>
+        <div style={{ textAlign: 'center', paddingBottom: '10px' }}>
+          <Text strong style={{ display: 'block', fontSize: '1em' }}>{product.companyName + '-' + product.title}</Text>
+          <Text strong style={{ display: 'block', fontSize: '0.9em' }}>{product.title_ar}</Text>
+          <Text strong style={{ display: 'block', fontSize: '1em' }}>{product.quantityDescription}</Text>
+          <Text strong style={{ display: 'block', marginTop: '4px' }}>${(product.price || 0).toFixed(2)}</Text>
         </div>
 
         {/* Image Cover Section */}
@@ -81,45 +76,51 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
                 icon={<LeftOutlined />}
                 size="small"
                 onClick={handlePrev}
-                style={{ position: 'absolute', left: 5, top: '50%', transform: 'translateY(-50%)' }}
+                style={{ position: 'absolute', left: 5, top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
               />
               <Button
                 icon={<RightOutlined />}
                 size="small"
                 onClick={handleNext}
-                style={{ position: 'absolute', right: 5, top: '50%', transform: 'translateY(-50%)' }}
+                style={{ position: 'absolute', right: 5, top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
               />
             </>
           )}
         </div>
 
-        <Card.Meta />
+        {/* 💡 CUSTOM QUANTITY CONTROL (Keyboard-Proof) */}
+        <div style={{
+          marginTop: 15,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          border: product.isSoldOut ? '2px solid red' : '1px solid #d9d9d9',
+          borderRadius: '6px',
+          padding: '4px'
+        }}>
+          <Button
+            type="text"
+            icon={<MinusOutlined />}
+            onClick={decrement}
+            disabled={quantity <= 0}
+            style={{ width: '30%' }}
+          />
 
-        {/* 💡 Quantity Input: Spans full width (same as image) */}
-        <Row style={{ marginTop: 15 }}>
-          <Col span={24}>
-            
-              <InputNumber
-                mode='spinner'
-                min={0}
-                max={99}
-                value={quantity}
-                onChange={handleQuantityChange}
-                style={{ width: '100%',border: product.isSoldOut ? '2px solid red' : undefined }} // 💡 Full width to match card/image
-                size="large"
-                placeholder="Qty"
-              />
+          <div style={{ flex: 1, textAlign: 'center' }}>
+            <Text strong style={{ fontSize: '1.2em' }}>{quantity}</Text>
+          </div>
 
-            
-          </Col>
-        </Row>
-        <Row>
-
-
-        </Row>
+          <Button
+            type="text"
+            icon={<PlusOutlined />}
+            onClick={increment}
+            disabled={quantity >= 99}
+            style={{ width: '30%' }}
+          />
+        </div>
       </Card>
 
-      {/* Image Zoom Modal */}
+      {/* Modal Section */}
       <Modal
         title={product.title}
         open={modalVisible}
@@ -128,24 +129,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, addProduct, initialQ
         width={400}
         centered
       >
-        <Image
-          src={currentImageUrl}
-          alt={product.title}
-          preview={false}
-          style={{ width: '100%', height: 'auto', display: 'block' }}
-        />
+        <Image src={currentImageUrl} preview={false} style={{ width: '100%', height: 'auto' }} />
         <div style={{ textAlign: 'center', marginTop: 10 }}>
           {product.images.map((img, index) => (
             <img
               key={index}
               src={img}
-              alt={`Thumbnail ${index + 1}`}
               style={{
-                width: 50,
-                height: 50,
-                margin: 5,
-                objectFit: 'cover',
-                cursor: 'pointer',
+                width: 50, height: 50, margin: 5, objectFit: 'cover', cursor: 'pointer',
                 border: index === currentImageIndex ? '2px solid #1890ff' : '1px solid #ccc',
               }}
               onClick={() => setCurrentImageIndex(index)}

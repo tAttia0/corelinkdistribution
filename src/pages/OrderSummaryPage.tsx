@@ -1,5 +1,5 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Divider, InputNumber, List, message, Popconfirm, Row, Typography } from 'antd';
+import { Alert, Badge, Button, Card, Col, Divider, InputNumber, List, message, Popconfirm, Row, Typography } from 'antd';
 import { doc, getDoc, getFirestore, increment, setDoc } from 'firebase/firestore';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -47,22 +47,25 @@ const OrderSummaryPage = () => {
     syncSettings();
   }, [whatsappNumber, setWhatsappNumber]);
 
-  // --- Logic: Generate Daily Order ID (YYYYMMDD_SN) ---
+  // --- Logic: Generate Global Serial Number (1, 2, 3...) ---
   const getOrderIdentifier = async () => {
     const db = getFirestore();
-    const now = new Date();
-    const dateKey = now.toISOString().split('T')[0].replace(/-/g, '');
-
-    const counterRef = doc(db, 'settings', 'order_counters');
+    const counterRef = doc(db, 'settings', 'global_order_counter');
 
     try {
-      await setDoc(counterRef, { [dateKey]: increment(1) }, { merge: true });
+      // Increment the 'currentValue' field globally
+      await setDoc(counterRef, { currentValue: increment(1) }, { merge: true });
+
+      // Fetch the updated value
       const snap = await getDoc(counterRef);
-      const sn = snap.data()?.[dateKey] || 1;
-      return `${dateKey}_${sn.toString().padStart(2, '0')}`;
+      const serialNumber = snap.data()?.currentValue || 1;
+
+      // Returns just the number (e.g., "125")
+      return `${serialNumber}`;
     } catch (e) {
       console.error("Counter error:", e);
-      return `${dateKey}_${Math.floor(Math.random() * 90 + 10)}`;
+      // Fallback to a random number if Firestore fails to prevent blocking the order
+      return `SN-${Math.floor(Math.random() * 10000)}`;
     }
   };
 
@@ -94,7 +97,7 @@ const OrderSummaryPage = () => {
       });
 
       const cleanNumber = whatsappNumber.replace(/\D/g, '');
-      const separator = String.fromCharCode(45).repeat(50) + '%0A';
+      const separator = String.fromCharCode(45).repeat(30) + '%0A';
       const tab = '%20%20%20%20%20%20';
 
       let msg = `*NEW ORDER RECEIVED*%0A`;
@@ -134,10 +137,11 @@ const OrderSummaryPage = () => {
 
   return (
     <div style={{ padding: isMobile ? '10px' : '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <Title level={isMobile ? 3 : 2} style={{ marginBottom: 8 }}>Step 2: Order Summary</Title>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 24 }}>
-        Order for: <Text strong>{companyName}</Text> {city && `(${city})`}
-      </Text>
+
+      <Title level={2} style={{ marginBottom: 8, fontSize: 'large', fontWeight: 'bolder', textAlign: 'center' }}>
+        STEP 2: ORDER SUMMARY
+      </Title>
+      <Alert title={"Order for: " + companyName + " (" + city + ")"} style={{ display: 'block', marginBottom: 24, fontWeight: 'bolder' }} type="info" />
 
       {isMobile ? (
         <MobileOrderSummary

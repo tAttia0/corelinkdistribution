@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBWKRKsLfri2VIScAXfNlRdmq2jWpE4fhg",
-  authDomain: "corelinkdistribution-app.firebaseapp.com",
-  projectId: "corelinkdistribution-app",
-  storageBucket: "corelinkdistribution-app.firebasestorage.app",
-  messagingSenderId: "712906843486",
-  appId: "1:712906843486:web:3e5c2db26aaeb44c649bcf"
+  apiKey: "AIzaSyCQuaTqMRiTRjf9psygufa1rjfyVFxbJDE",
+  authDomain: "corelinkdistribution-e5063.firebaseapp.com",
+  projectId: "corelinkdistribution-e5063",
+  storageBucket: "corelinkdistribution-e5063.firebasestorage.app",
+  messagingSenderId: "148757713126",
+  appId: "1:148757713126:web:174101c0f9fb0911e2ab27"
 };
 
 // Initialize Firebase

@@ -18,7 +18,7 @@ const ProductSelectionPage = () => {
 
   const navigate = useNavigate();
   // We use addProduct which handles both adding and updating quantity
-  const { companyName, selectedProducts, addProduct } = useOrder();
+  const { companyName, city, selectedProducts, addProduct } = useOrder();
 
   // Function to get the current quantity of a product for the ProductCard
   const getProductQuantity = (productId: string) => {
@@ -88,10 +88,10 @@ const ProductSelectionPage = () => {
 
   return (
     <div>
-      <Title level={2} style={{ marginBottom: 8 }}>
-        Step 1: Product Selection
+      <Title level={2} style={{ marginBottom: 8, fontSize: 'large', fontWeight: 'bolder', textAlign: 'center' }}>
+        STEP 1: PRODUCT SELECTION
       </Title>
-      <Alert title={"Placing order for: " + companyName} style={{ display: 'block', marginBottom: 24 }} type="info" />
+      <Alert title={"Order for: " + companyName + " (" + city + ")"} style={{ display: 'block', marginBottom: 24, fontWeight: 'bolder' }} type="info" />
 
 
       {/* Product List */}
@@ -141,7 +141,7 @@ const ProductSelectionPage = () => {
               onClick={handleProceedToSummary}
               disabled={totalItems === 0}
             >
-              next ({totalItems}) <ForwardOutlined />
+              NEXT  <ForwardOutlined />
             </Button>
           </Col>
         </Row>

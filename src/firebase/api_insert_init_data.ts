@@ -7,48 +7,121 @@ import { db } from './config'; // 💡 db instance should be exported from your 
 const INIT_PRODUCTS_DATA: Record<string, any> = { // 💡 Added type assertion for better safety
 
     "P001": {
-        "images": ["https://picsum.photos/300/200?random=akawi1"],
-        "price": 30,
-        "title": "Chinook Cheese: Akawi",
-        "title_ar": "جبنة عكاوي"
+        companyName: "Chinook",
+        images: [
+            "products/P001_F.jpg",
+            "products/P001_B.jpg",
+        ], 
+        isSoldOut: false,
+        price: 115.20,
+        quantityDescription: "6 X 1kg",
+        title: "Akawi Cheese Jar",
+        title_ar: ""
     },
 
     "P002": {
-        "images": ["https://picsum.photos/300/200?random=akawi2"],
-        "price": 30,
-        "title": "Chinook Cheese: Braided Cheese",
-        "title_ar": "جبنة مجدلة"
+        companyName: "Chinook",
+        images: [
+            "products/P002_F.jpg",
+            "products/P002_B.jpg",
+        ], 
+        isSoldOut: false,
+        price: 115.20,
+        quantityDescription: "6 X 1kg",
+        title: "Haloumi Cheese Jar",
+        title_ar: ""
     },
     "P003": {
-        "images": ["https://picsum.photos/300/200?random=akawi3"],
-        "price": 30,
-        "title": "Chinook Cheese: Ghee",
-        "title_ar": "سمن عربي بلدي"
+        companyName: "Chinook",
+        images: [
+            "products/P003_F.jpg",
+            "products/P003_B.jpg",
+        ], 
+        isSoldOut: false,
+        price: 115.20,
+        quantityDescription: "6 X 1kg",
+        title: "Nabulsi Cheese Jar",
+        title_ar: ""
     },
     "P004": {
-        "images": ["https://picsum.photos/300/200?random=akawi4"],
-        "price": 30,
-        "title": "Chinook Cheese: String_Cheese",
-        "title_ar": "جبنة مشللة"
+        companyName: "Chinook",
+        images: [
+            "products/P004_F.jpg",
+            "products/P004_B.jpg",
+        ], 
+        isSoldOut: false,
+        price: 188.00,
+        quantityDescription: "6 X 1kg",
+        title: "String Cheese Jar",
+        title_ar: "(Twisted)"
     },
     "P005": {
-        "images": ["https://picsum.photos/300/200?random=akawi5"],
-        "price": 30,
-        "title": "Chinook Cheese: Haloumi",
-        "title_ar": "جبنة حلومي"
+        companyName: "Chinook",
+        images: [
+            "products/P005_F.jpg",
+            "products/P005_B.jpg",
+        ], 
+        isSoldOut: false,
+        price: 188.00,
+        quantityDescription: "6 X 1kg",
+        title: "Braided Cheese Jar",
+        title_ar: "(Mujadalh)"
     },
     "P006": {
-        "images": ["https://picsum.photos/300/200?random=akawi6"],
-        "price": 30,
-        "title": "Chinook Cheese: Labneh",
-        "title_ar": "لبنه"
+        companyName: "Chinook",
+        images: [
+            "products/P006_F.jpg",
+        ], 
+        isSoldOut: false,
+        price: 53.00,
+        quantityDescription: "12 X 450g",
+        title: "Labneh",
+        title_ar: ""
     },
     "P007": {
-        "images": ["https://picsum.photos/300/200?random=akawi7"], // Changed random seed to 7
-        "price": 30,
-        "title": "Chinook Cheese: Nabulsi",
-        "title_ar": "جبنة نابولسي"
-    }
+        companyName: "Chinook",
+        images: [
+            "products/P007_F.jpg",
+        ], 
+        isSoldOut: false,
+        price: 95.00,
+        quantityDescription: "12 X 1kg",
+        title: "Labneh",
+        title_ar: ""
+    },
+    "P008": {
+        companyName: "Chinook",
+        images: [
+            "products/P008_F.jpg",
+        ], 
+        isSoldOut: false,
+        price: 144.00,
+        quantityDescription: "12 X 400g",
+        title: "Ghee",
+        title_ar: ""
+    },
+    "P009": {
+        companyName: "Chinook",
+        images: [
+            "products/P009_F.jpg",
+        ], 
+        isSoldOut: false,
+        price: 254.00,
+        quantityDescription: "12 X 800g",
+        title: "Ghee",
+        title_ar: ""
+    },
+    "P010": {
+        companyName: "Chinook",
+        images: [
+            "products/P010_F.jpg",
+        ], 
+        isSoldOut: false,
+        price: 148.00,
+        quantityDescription: "2 Balls X 200g / 24 packs",
+        title: "Shanklish",
+        title_ar: ""
+    },
 };
 
 /**
