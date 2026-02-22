@@ -8,6 +8,7 @@ CoreLink is designed for scalability and speed. It serves as a central hub for m
 This project showcases a modern, type-safe frontend architecture:
 
 Framework: React & TypeScript for scalable, bug-resistant code.
+<<<<<<< HEAD
 Styling: Tailwind CSS for a utility-first, responsive design.
 Components: Material UI for a polished, professional user experience.
 State Management: Optimized for high-performance data flow.
@@ -45,6 +46,52 @@ Location: Serving all of New Jersey (NJ/NYC) & Remote.
 LinkedIn: www.linkedin.com/in/tattia0
 Services: Available for MVP Development, UI/UX Implementation, and Custom Software Solutions.
 
+=======
+
+Styling: Tailwind CSS for a utility-first, responsive design.
+
+Components: Material UI for a polished, professional user experience.
+
+State Management: Optimized for high-performance data flow.
+
+✨ Key Features
+Dynamic Link Distribution: Intelligent routing and management of core links.
+
+Responsive Dashboard: Fully optimized for Mobile, Tablet, and Desktop views.
+
+Type-Safe Architecture: Leveraging TypeScript to ensure data integrity across the application.
+
+Performance First: Minimal re-renders and optimized asset loading.
+
+📦 Getting Started
+Prerequisites
+Node.js (v18 or higher)
+
+npm or yarn
+
+Installation
+Clone the repository:
+
+Bash
+git clone https://github.com/tAttia0/corelinkdistribution.git
+Install dependencies:
+
+Bash
+npm install
+Start the development server:
+
+Bash
+npm start
+
+
+👨‍💻 About the Developer
+I am a Full Stack Developer specializing in Frontend Startup solutions. I bridge the gap between complex business requirements and intuitive user interfaces.
+
+Location: Serving all of New Jersey (NJ/NYC) & Remote.
+LinkedIn: www.linkedin.com/in/tattia0
+Services: Available for MVP Development, UI/UX Implementation, and Custom Software Solutions.
+
+>>>>>>> 7d9811b3550b233077970c276a0cf908cc4de1d4
 How to use this:
     Go to your GitHub repo: tAttia0/corelinkdistribution.
     Click the pencil icon to edit the README.md.
