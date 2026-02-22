@@ -49,3 +49,8 @@ How to use this:
     Go to your GitHub repo: tAttia0/corelinkdistribution.
     Click the pencil icon to edit the README.md.
     Paste the content above.
+
+## 📱 Responsive UI Showcase
+| Desktop View | Tablet View | Mobile View |
+| :--- | :--- | :--- |
+| ![Desktop](screen_2_desktop.jpg) | ![Tablet](screen_2_Tablet.jpg) | ![Mobile](screen_2_Mobile.jpg) |
