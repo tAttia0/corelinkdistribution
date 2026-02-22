@@ -53,6 +53,6 @@ How to use this:
 ## 📱 Responsive UI Showcase
 || Desktop View | Tablet View | Mobile View |
 | :--- | :--- | :--- | :--- |
-|1st screen | ![Desktop](screenshots/screen_1_desktop.jpg) | ![Tablet](screenshots/screen_1_Tablet.jpg) | ![Mobile](screenshots/screen_1_Mobile.jpg) |
+|1st screen | ![Desktop](screenshots/screen_1.jpg) | ![Tablet](screenshots/screen_1.jpg) | ![Mobile](screenshots/screen_1.jpg) |
 |2nd screen | ![Desktop](screenshots/screen_2_desktop.jpg) | ![Tablet](screenshots/screen_2_Tablet.jpg) | ![Mobile](screenshots/screen_2_Mobile.jpg) |
 |3rd screen | ![Desktop](screenshots/screen_3_desktop.jpg) | ![Tablet](screenshots/screen_3_Tablet.jpg) | ![Mobile](screenshots/screen_3_Mobile.jpg) |
