@@ -53,4 +53,4 @@ How to use this:
 ## 📱 Responsive UI Showcase
 | Desktop View | Tablet View | Mobile View |
 | :--- | :--- | :--- |
-| ![Desktop](screen_2_desktop.jpg) | ![Tablet](screen_2_Tablet.jpg) | ![Mobile](screen_2_Mobile.jpg) |
+| ![Desktop](screenshots/screen_2_desktop.jpg) | ![Tablet](screenshots/screen_2_Tablet.jpg) | ![Mobile](screenshots/screen_2_Mobile.jpg) |
