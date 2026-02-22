@@ -46,3 +46,11 @@ To explore the live application, use the following credentials on the login scre
 1. Clone the repository:
    ```bash
    git clone [https://github.com/tAttia0/corelinkdistribution.git](https://github.com/tAttia0/corelinkdistribution.git)
+
+
+## 📱 Responsive UI Showcase
+|| Desktop View | Tablet View | Mobile View |
+| :--- | :--- | :--- | :--- |
+|Login | ![Desktop](screenshots/screen_1.jpg) | ![Tablet](screenshots/screen_1.jpg) | ![Mobile](screenshots/screen_1.jpg) |
+|Selection | ![Desktop](screenshots/screen_2_desktop.jpg) | ![Tablet](screenshots/screen_2_Tablet.jpg) | ![Mobile](screenshots/screen_2_Mobile.jpg) |
+|Summary | ![Desktop](screenshots/screen_3_desktop.jpg) | ![Tablet](screenshots/screen_3_Tablet.jpg) | ![Mobile](screenshots/screen_3_Mobile.jpg) |
