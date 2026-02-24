@@ -43,22 +43,24 @@ To explore the live application, use the following credentials on the login scre
 * npm or yarn
 
 ### Installation
-1. Clone the repository:
+1. Clone the repository
    ```bash
     git clone [https://github.com/tAttia0/corelinkdistribution.git](https://github.com/tAttia0/corelinkdistribution.git)
 
+2. install dependencies
    ```bash
     npm install
 
+3. Start the development server
    ```bash
     npm run dev
 
 # 👨‍💻 About the Developer
 I am a Full Stack Developer specializing in Frontend Startup solutions. I bridge the gap between complex business requirements and intuitive user interfaces.
 
-## Location: Serving all of New Jersey (NJ/NYC) & Remote.
-## LinkedIn: linkedin.com/in/tattia0
-## Services: MVP Development, UI/UX Implementation, and Custom Software Solutions.
+### Location: Serving all of New Jersey (NJ/NYC) & Remote.
+### LinkedIn: linkedin.com/in/tattia0
+### Services: MVP Development, UI/UX Implementation, and Custom Software Solutions.
 
 ## 📱 Responsive UI Showcase
 || Desktop View | Tablet View | Mobile View |
