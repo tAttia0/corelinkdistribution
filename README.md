@@ -46,7 +46,11 @@ To explore the live application, use the following credentials on the login scre
 1. Clone the repository:
    ```bash
     git clone [https://github.com/tAttia0/corelinkdistribution.git](https://github.com/tAttia0/corelinkdistribution.git)
+
+   ```bash
     npm install
+
+   ```bash
     npm run dev
 
 # 👨‍💻 About the Developer
